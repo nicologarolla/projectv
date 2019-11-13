@@ -14,8 +14,7 @@ namespace DataReader.Sensors
         private static Random rnd = new Random();
         static double initialnum = 0;
         static double initialac = 0;
-        //public void SetTemperature(decimal temperature)
-        //{ }
+
 
         public string Apertura()
         {
@@ -58,43 +57,32 @@ namespace DataReader.Sensors
 
         public string[] Posizione()
         {
-            //int delay = rnd.Next(0, 5000);
-            //System.Threading.Thread.Sleep(delay);
+            JToken trackToken = Utils.ListaTokens[Utils.LTcounter];
+            string[] list = new string[2];
 
-            using(StreamReader file = File.OpenText(@"C:\Users\PC\Desktop\prvgraf\BUS\DataReader\Sensors\track.json"))
-            using (JsonTextReader reader = new JsonTextReader(file))
+            list[0] = trackToken.Value<string>("lat");
+            list[1] = trackToken.Value<string>("lon");
+
+            Utils.LTcounter++;
+
+            return list;
+        }
+
+        internal static List<JToken> ReadTrackFile()
+        {
+            List<JToken> temp = new List<JToken>();
+            using (StreamReader file = File.OpenText("track.json"))
             {
-                JObject o2 = (JObject)JToken.ReadFrom(reader);
-
-                var listObj = o2.GetValue("trackData");
-
-
-                string lat = listObj[0].Value<string>("lat");
-                string[] list = new string[2];
-
-                foreach (JToken trackToken in listObj.Children())
+                using (JsonTextReader reader = new JsonTextReader(file))
                 {
-                    list[0] = trackToken.Value<string>("lat").ToString();
-                    list[1] = trackToken.Value<string>("lon").ToString();
-                    //Console.WriteLine(trackToken.Value<string>("lon"));
-                    
+                    JObject o2 = (JObject)JToken.ReadFrom(reader);
+                    var listObj = o2.GetValue("trackData");
+
+                    temp = listObj.Children<JToken>().ToList<JToken>();
                 }
-            
-                return list;
             }
 
-
-
-/*
-            string[] list = new string[2];
-             double ran = Convert.ToDouble(rnd.Next(-99, 100)) / 10000000;
-            list[0] = (45.9536714 + ran).ToString();
-
-            ran = Convert.ToDouble(rnd.Next(-99, 100)) / 10000000;
-            list[1] = (12.6855359 + ran).ToString();
-
-
-            return list;*/
+            return temp;
         }
 
         public string Id()

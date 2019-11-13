@@ -28,7 +28,7 @@ namespace DataReader
             time = 5000;
             while (true)
             {
-                SetTime();
+                //SetTime();
 
                 foreach (ISensor sensor in sensors)
                 {
@@ -37,10 +37,10 @@ namespace DataReader
                     Console.WriteLine(data);
 
                     // push to redis queue
-                    redis.LPush("sensors_data", data);
+                    //redis.LPush("sensors_data", data);
 
                     // wait 1 second
-                    System.Threading.Thread.Sleep(10000);
+                    System.Threading.Thread.Sleep(5000);
                 }
 
             }
